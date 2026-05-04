@@ -1,6 +1,7 @@
 steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
+    dir: 'genai-service'
     args:
       - 'run'
       - 'deploy'
