@@ -1,0 +1,6 @@
+node_modules/
+*.pdf
+.claude/
+*.env
+.DS_Store
+report/node_modules/

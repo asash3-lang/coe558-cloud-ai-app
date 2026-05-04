@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>API Docs - COE 558</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"/>
+  <style>
+    body { margin: 0; background: #0f172a; }
+    .topbar { background: #1e3a8a !important; }
+    .topbar-wrapper img { display: none; }
+    .topbar-wrapper::before {
+      content: "☁️ Cloud AI App - API Documentation";
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    #api-selector {
+      background: #1e293b;
+      padding: 16px 24px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    #api-selector label { color: #94a3b8; font-family: sans-serif; font-size: 0.9rem; }
+    #api-selector button {
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: 2px solid #3b82f6;
+      background: transparent;
+      color: #93c5fd;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      font-family: sans-serif;
+    }
+    #api-selector button.active,
+    #api-selector button:hover {
+      background: #3b82f6;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<div id="api-selector">
+  <label>Select API:</label>
+  <button class="active" onclick="loadSpec('s1')">🌤️ S1 - Weather</button>
+  <button onclick="loadSpec('s2')">🎨 S2 - GenAI</button>
+  <button onclick="loadSpec('s3')">📚 S3 - CRUD</button>
+</div>
+
+<div id="swagger-ui"></div>
+
+<script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+<script>
+  const specs = {
+    s1: {
+      openapi: "3.0.0",
+      info: { title: "S1 - Weather Service", version: "1.0.0", description: "Gets current weather from WeatherAPI.com" },
+      servers: [{ url: "https://weather-service-180225892893.us-central1.run.app", description: "GCP Cloud Run" }],
+      paths: {
+        "/": {
+          get: {
+            summary: "Get current weather",
+            description: "Returns weather data for a city, coordinates, or auto-detected IP location.",
+            parameters: [
+              { name: "city", in: "query", schema: { type: "string" }, description: "City name (e.g. Riyadh)", example: "Riyadh" },
+              { name: "lat", in: "query", schema: { type: "number" }, description: "Latitude", example: 24.7 },
+              { name: "lon", in: "query", schema: { type: "number" }, description: "Longitude", example: 46.7 },
+              { name: "ip", in: "query", schema: { type: "string" }, description: "Use 'auto' to detect by IP", example: "auto" }
+            ],
+            responses: {
+              "200": {
+                description: "Weather data",
+                content: {
+                  "application/json": {
+                    example: {
+                      location: { name: "Riyadh", country: "Saudi Arabia", lat: 24.64, lon: 46.77, localtime: "2026-04-30 11:00" },
+                      weather: { temp_c: 30.4, temp_f: 86.7, feels_like_c: 29, feels_like_f: 84.2, condition: { text: "Sunny", icon: "https://cdn.weatherapi.com/weather/64x64/day/113.png", code: 1000 }, humidity: 22, wind_kph: 16.9, wind_dir: "E", is_day: 1 }
+                    }
+                  }
+                }
+              },
+              "400": { description: "Invalid location" },
+              "500": { description: "Server error" }
+            }
+          }
+        }
+      }
+    },
+    s2: {
+      openapi: "3.0.0",
+      info: { title: "S2 - GenAI Service", version: "1.0.0", description: "Generates images from text prompts using Google Imagen 3 via Vertex AI" },
+      servers: [{ url: "https://genai-service-180225892893.us-central1.run.app", description: "GCP Cloud Run" }],
+      paths: {
+        "/": {
+          post: {
+            summary: "Generate image from text prompt",
+            description: "Uses Google Imagen 3 (Vertex AI) to generate an image from a text prompt. Returns base64 encoded image.",
+            requestBody: {
+              required: true,
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    required: ["prompt"],
+                    properties: {
+                      prompt: { type: "string", description: "Text description of the image to generate", example: "A futuristic city at night with glowing neon lights" }
+                    }
+                  }
+                }
+              }
+            },
+            responses: {
+              "200": {
+                description: "Generated image",
+                content: {
+                  "application/json": {
+                    example: {
+                      prompt: "A futuristic city at night",
+                      image: "/9j/4AAQSkZJRg...(base64)",
+                      mimeType: "image/jpeg",
+                      model: "imagen-3.0-generate-001"
+                    }
+                  }
+                }
+              },
+              "400": { description: "Missing prompt" },
+              "500": { description: "Generation failed" }
+            }
+          }
+        }
+      }
+    },
+    s3: {
+      openapi: "3.0.0",
+      info: { title: "S3 - CRUD Service", version: "1.0.0", description: "Manages history of GenAI prompts and results using Firestore and Cloud Storage" },
+      servers: [{ url: "https://crud-service-180225892893.us-central1.run.app", description: "GCP Cloud Run" }],
+      paths: {
+        "/api/history": {
+          get: {
+            summary: "Get all saved results",
+            description: "Returns all saved GenAI history sorted by newest first.",
+            responses: {
+              "200": {
+                description: "List of history items",
+                content: {
+                  "application/json": {
+                    example: [{ id: "abc123", prompt: "A sunset", model: "imagen-3.0-generate-001", imageUrl: "https://storage.googleapis.com/...", createdAt: "2026-04-30T10:00:00.000Z" }]
+                  }
+                }
+              }
+            }
+          },
+          post: {
+            summary: "Save a new GenAI result",
+            description: "Saves prompt and generated image to Firestore and Cloud Storage.",
+            requestBody: {
+              required: true,
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    required: ["prompt"],
+                    properties: {
+                      prompt: { type: "string", example: "A beautiful sunset" },
+                      image: { type: "string", description: "Base64 encoded image", example: "/9j/4AAQ..." },
+                      mimeType: { type: "string", example: "image/jpeg" },
+                      model: { type: "string", example: "imagen-3.0-generate-001" }
+                    }
+                  }
+                }
+              }
+            },
+            responses: {
+              "201": { description: "Saved successfully", content: { "application/json": { example: { id: "abc123", prompt: "A sunset", imageUrl: "https://storage.googleapis.com/...", createdAt: "2026-04-30T10:00:00.000Z" } } } },
+              "400": { description: "Missing prompt" },
+              "500": { description: "Server error" }
+            }
+          }
+        },
+        "/api/history/{id}": {
+          get: {
+            summary: "Get a specific result",
+            parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" }, example: "abc123" }],
+            responses: {
+              "200": { description: "History item" },
+              "404": { description: "Not found" }
+            }
+          },
+          put: {
+            summary: "Update a result",
+            parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+            requestBody: {
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      prompt: { type: "string" },
+                      model: { type: "string" }
+                    }
+                  }
+                }
+              }
+            },
+            responses: {
+              "200": { description: "Updated successfully" },
+              "404": { description: "Not found" }
+            }
+          },
+          delete: {
+            summary: "Delete a result",
+            description: "Deletes the record from Firestore and the image from Cloud Storage.",
+            parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" }, example: "abc123" }],
+            responses: {
+              "200": { description: "Deleted successfully" },
+              "404": { description: "Not found" }
+            }
+          }
+        }
+      }
+    }
+  };
+
+  let ui;
+
+  function loadSpec(name) {
+    document.querySelectorAll('#api-selector button').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+
+    if (ui) { document.getElementById('swagger-ui').innerHTML = ''; }
+
+    ui = SwaggerUIBundle({
+      spec: specs[name],
+      dom_id: '#swagger-ui',
+      presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
+      layout: "BaseLayout",
+      deepLinking: true,
+      tryItOutEnabled: true,
+    });
+  }
+
+  // Load S1 by default
+  ui = SwaggerUIBundle({
+    spec: specs.s1,
+    dom_id: '#swagger-ui',
+    presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
+    layout: "BaseLayout",
+    deepLinking: true,
+  });
+</script>
+</body>
+</html>

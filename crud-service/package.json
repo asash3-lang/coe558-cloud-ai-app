@@ -1,0 +1,15 @@
+{
+  "name": "crud-service",
+  "version": "1.0.0",
+  "description": "S3 - CRUD Service for GenAI history",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@google-cloud/firestore": "^7.0.0",
+    "@google-cloud/storage": "^7.0.0",
+    "body-parser": "^1.20.0",
+    "express": "^4.18.0"
+  }
+}

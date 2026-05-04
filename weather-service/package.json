@@ -1,0 +1,13 @@
+{
+  "name": "weather-service",
+  "version": "1.0.0",
+  "description": "S1 - Weather Service Cloud Run Function",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx functions-framework --signature-type=http --target=weather"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "^4.0.0",
+    "axios": "^1.13.1"
+  }
+}

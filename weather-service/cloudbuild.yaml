@@ -1,0 +1,17 @@
+steps:
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'weather-service'
+      - '--source=.'
+      - '--region=us-central1'
+      - '--allow-unauthenticated'
+      - '--project=$PROJECT_ID'
+      - '--function=weather'
+      - '--base-image=nodejs22'
+    id: 'deploy-weather-service'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

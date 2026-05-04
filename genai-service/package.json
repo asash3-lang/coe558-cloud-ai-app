@@ -1,0 +1,13 @@
+{
+  "name": "genai-service",
+  "version": "1.0.0",
+  "description": "S2 - GenAI Service Cloud Run Function",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx functions-framework --signature-type=http --target=genai"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "^4.0.0",
+    "@google/genai": "^1.0.0"
+  }
+}

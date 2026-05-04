@@ -1,0 +1,16 @@
+steps:
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'frontend'
+      - '--source=.'
+      - '--region=us-central1'
+      - '--allow-unauthenticated'
+      - '--project=$PROJECT_ID'
+      - '--port=8080'
+    id: 'deploy-frontend'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

@@ -1,0 +1,238 @@
+swagger: "2.0"
+info:
+  title: Cloud AI App API
+  description: API Gateway for COE 558 Project - Weather, GenAI, and CRUD services
+  version: "1.0.0"
+host: "cloud-ai-gateway-2aslucyl.uc.gateway.dev"
+schemes:
+  - https
+produces:
+  - application/json
+
+paths:
+
+  # ===== S1: WEATHER SERVICE =====
+  /weather:
+    get:
+      summary: Get current weather
+      operationId: getWeather
+      parameters:
+        - name: city
+          in: query
+          type: string
+        - name: lat
+          in: query
+          type: number
+        - name: lon
+          in: query
+          type: number
+        - name: ip
+          in: query
+          type: string
+      responses:
+        200:
+          description: Weather data
+        400:
+          description: Bad request
+        500:
+          description: Server error
+      x-google-backend:
+        address: https://weather-service-180225892893.us-central1.run.app/
+        path_translation: CONSTANT_ADDRESS
+    options:
+      operationId: corsWeather
+      responses:
+        200:
+          description: CORS preflight
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+      x-google-backend:
+        address: https://weather-service-180225892893.us-central1.run.app/
+        path_translation: CONSTANT_ADDRESS
+
+  # ===== S2: GENAI SERVICE =====
+  /genai:
+    post:
+      summary: Generate image from prompt
+      operationId: generateImage
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - prompt
+            properties:
+              prompt:
+                type: string
+      responses:
+        200:
+          description: Generated image in base64
+        400:
+          description: Bad request
+        500:
+          description: Server error
+      x-google-backend:
+        address: https://genai-service-180225892893.us-central1.run.app/
+        path_translation: CONSTANT_ADDRESS
+    options:
+      operationId: corsGenai
+      responses:
+        200:
+          description: CORS preflight
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+      x-google-backend:
+        address: https://genai-service-180225892893.us-central1.run.app/
+        path_translation: CONSTANT_ADDRESS
+
+  # ===== S3: CRUD SERVICE =====
+  /history:
+    get:
+      summary: Get all saved GenAI results
+      operationId: getAllHistory
+      responses:
+        200:
+          description: List of saved results
+        500:
+          description: Server error
+      x-google-backend:
+        address: https://crud-service-180225892893.us-central1.run.app/api/history
+        path_translation: CONSTANT_ADDRESS
+    post:
+      summary: Save a new GenAI result
+      operationId: createHistory
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - prompt
+            properties:
+              prompt:
+                type: string
+              image:
+                type: string
+              mimeType:
+                type: string
+              model:
+                type: string
+      responses:
+        201:
+          description: Saved successfully
+        400:
+          description: Bad request
+        500:
+          description: Server error
+      x-google-backend:
+        address: https://crud-service-180225892893.us-central1.run.app/api/history
+        path_translation: CONSTANT_ADDRESS
+    options:
+      operationId: corsHistory
+      responses:
+        200:
+          description: CORS preflight
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+      x-google-backend:
+        address: https://crud-service-180225892893.us-central1.run.app/api/history
+        path_translation: CONSTANT_ADDRESS
+
+  /history/{id}:
+    get:
+      summary: Get a specific saved result
+      operationId: getHistoryById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Saved result
+        404:
+          description: Not found
+      x-google-backend:
+        address: https://crud-service-180225892893.us-central1.run.app/api/history/{id}
+        path_translation: CONSTANT_ADDRESS
+    put:
+      summary: Update a saved result
+      operationId: updateHistory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              prompt:
+                type: string
+      responses:
+        200:
+          description: Updated successfully
+        404:
+          description: Not found
+      x-google-backend:
+        address: https://crud-service-180225892893.us-central1.run.app/api/history/{id}
+        path_translation: CONSTANT_ADDRESS
+    delete:
+      summary: Delete a saved result
+      operationId: deleteHistory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Deleted successfully
+        404:
+          description: Not found
+      x-google-backend:
+        address: https://crud-service-180225892893.us-central1.run.app/api/history/{id}
+        path_translation: CONSTANT_ADDRESS
+    options:
+      operationId: corsHistoryId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: CORS preflight
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+      x-google-backend:
+        address: https://crud-service-180225892893.us-central1.run.app/api/history/{id}
+        path_translation: CONSTANT_ADDRESS

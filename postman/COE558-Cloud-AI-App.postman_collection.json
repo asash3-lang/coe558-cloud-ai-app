@@ -1,0 +1,385 @@
+{
+  "info": {
+    "name": "COE558 - Cloud AI App",
+    "description": "Postman collection for COE 558 Project - Weather, GenAI, and CRUD services",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "S1 - Weather Service",
+      "description": "Weather Service endpoints via API Gateway",
+      "item": [
+        {
+          "name": "Get Weather by City",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/weather?city=Riyadh",
+              "protocol": "https",
+              "host": ["cloud-ai-gateway-2aslucyl", "uc", "gateway", "dev"],
+              "path": ["weather"],
+              "query": [{ "key": "city", "value": "Riyadh" }]
+            },
+            "description": "Get current weather by city name"
+          },
+          "response": [
+            {
+              "name": "200 - Success",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"location\": {\n    \"name\": \"Riyadh\",\n    \"region\": \"Ar Riyad\",\n    \"country\": \"Saudi Arabia\",\n    \"lat\": 24.6408,\n    \"lon\": 46.7728,\n    \"localtime\": \"2026-04-30 11:22\"\n  },\n  \"weather\": {\n    \"temp_c\": 30.4,\n    \"temp_f\": 86.7,\n    \"feels_like_c\": 29.0,\n    \"feels_like_f\": 84.2,\n    \"condition\": {\n      \"text\": \"Sunny\",\n      \"icon\": \"https://cdn.weatherapi.com/weather/64x64/day/113.png\",\n      \"code\": 1000\n    },\n    \"humidity\": 22,\n    \"wind_kph\": 16.9,\n    \"wind_dir\": \"E\",\n    \"is_day\": 1\n  }\n}",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/weather?city=Riyadh"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Weather by Coordinates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/weather?lat=21.3891&lon=39.8579",
+              "protocol": "https",
+              "host": ["cloud-ai-gateway-2aslucyl", "uc", "gateway", "dev"],
+              "path": ["weather"],
+              "query": [
+                { "key": "lat", "value": "21.3891" },
+                { "key": "lon", "value": "39.8579" }
+              ]
+            },
+            "description": "Get current weather by latitude and longitude (Mecca)"
+          },
+          "response": [
+            {
+              "name": "200 - Success",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"location\": {\n    \"name\": \"Al Badr\",\n    \"region\": \"Makkah\",\n    \"country\": \"Saudi Arabia\",\n    \"lat\": 21.393,\n    \"lon\": 39.841,\n    \"localtime\": \"2026-04-30 11:23\"\n  },\n  \"weather\": {\n    \"temp_c\": 32.6,\n    \"temp_f\": 90.7,\n    \"feels_like_c\": 30.4,\n    \"feels_like_f\": 86.7,\n    \"condition\": {\n      \"text\": \"Sunny\",\n      \"icon\": \"https://cdn.weatherapi.com/weather/64x64/day/113.png\",\n      \"code\": 1000\n    },\n    \"humidity\": 12,\n    \"wind_kph\": 17.3,\n    \"wind_dir\": \"NNW\",\n    \"is_day\": 1\n  }\n}",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/weather?lat=21.3891&lon=39.8579"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Weather by Auto IP",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/weather?ip=auto",
+              "protocol": "https",
+              "host": ["cloud-ai-gateway-2aslucyl", "uc", "gateway", "dev"],
+              "path": ["weather"],
+              "query": [{ "key": "ip", "value": "auto" }]
+            },
+            "description": "Auto-detect location by IP address"
+          },
+          "response": [
+            {
+              "name": "200 - Success",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"location\": {\n    \"name\": \"Riyadh\",\n    \"country\": \"Saudi Arabia\",\n    \"lat\": 24.6408,\n    \"lon\": 46.7728,\n    \"localtime\": \"2026-04-30 11:22\"\n  },\n  \"weather\": {\n    \"temp_c\": 30.4,\n    \"temp_f\": 86.7,\n    \"condition\": { \"text\": \"Sunny\", \"code\": 1000 },\n    \"humidity\": 22,\n    \"is_day\": 1\n  }\n}",
+              "originalRequest": {
+                "method": "GET",
+                "url": { "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/weather?ip=auto" }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "S2 - GenAI Service",
+      "description": "GenAI image generation using Google Imagen 3 via Vertex AI",
+      "item": [
+        {
+          "name": "Generate Image from Prompt",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"A futuristic city at night with glowing neon lights and flying cars\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/genai",
+              "protocol": "https",
+              "host": ["cloud-ai-gateway-2aslucyl", "uc", "gateway", "dev"],
+              "path": ["genai"]
+            },
+            "description": "Generate an image from a text prompt using Google Imagen 3"
+          },
+          "response": [
+            {
+              "name": "200 - Success",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"prompt\": \"A futuristic city at night with glowing neon lights and flying cars\",\n  \"image\": \"/9j/4AAQSkZJRgABAQAAAQABAAD...(base64 encoded image)\",\n  \"mimeType\": \"image/jpeg\",\n  \"model\": \"imagen-3.0-generate-001\"\n}",
+              "originalRequest": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"prompt\": \"A futuristic city at night with glowing neon lights and flying cars\"\n}"
+                },
+                "url": { "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/genai" }
+              }
+            },
+            {
+              "name": "400 - Missing Prompt",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"error\": \"prompt is required in request body\"\n}",
+              "originalRequest": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": { "mode": "raw", "raw": "{}" },
+                "url": { "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/genai" }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Generate Image - Landscape",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"A beautiful desert landscape in Saudi Arabia at sunset with golden sand dunes\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/genai",
+              "protocol": "https",
+              "host": ["cloud-ai-gateway-2aslucyl", "uc", "gateway", "dev"],
+              "path": ["genai"]
+            },
+            "description": "Generate a landscape image"
+          },
+          "response": [
+            {
+              "name": "200 - Success",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"prompt\": \"A beautiful desert landscape in Saudi Arabia at sunset with golden sand dunes\",\n  \"image\": \"/9j/4AAQSkZJRgABAQAAAQABAAD...(base64 encoded image)\",\n  \"mimeType\": \"image/jpeg\",\n  \"model\": \"imagen-3.0-generate-001\"\n}",
+              "originalRequest": {
+                "method": "POST",
+                "url": { "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/genai" }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "S3 - CRUD Service",
+      "description": "CRUD operations for GenAI history using Firestore and Cloud Storage",
+      "item": [
+        {
+          "name": "Create - Save GenAI Result",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"A beautiful sunset over mountains\",\n  \"image\": \"/9j/4AAQSkZJRgABAQAAAQABAAD...(base64)\",\n  \"mimeType\": \"image/jpeg\",\n  \"model\": \"imagen-3.0-generate-001\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/history",
+              "protocol": "https",
+              "host": ["cloud-ai-gateway-2aslucyl", "uc", "gateway", "dev"],
+              "path": ["history"]
+            },
+            "description": "Save a new GenAI result to Firestore and upload image to Cloud Storage"
+          },
+          "response": [
+            {
+              "name": "201 - Created",
+              "status": "Created",
+              "code": 201,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": \"DK4KVCDl5jm6SwmWN4kF\",\n  \"prompt\": \"A beautiful sunset over mountains\",\n  \"model\": \"imagen-3.0-generate-001\",\n  \"imageUrl\": \"https://storage.googleapis.com/manifest-bit-494908-a5-genai-images/images/1746005823790.jpg\",\n  \"createdAt\": \"2026-04-30T10:57:03.790Z\"\n}",
+              "originalRequest": {
+                "method": "POST",
+                "url": { "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/history" }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read All - Get History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/history",
+              "protocol": "https",
+              "host": ["cloud-ai-gateway-2aslucyl", "uc", "gateway", "dev"],
+              "path": ["history"]
+            },
+            "description": "Get all saved GenAI results sorted by newest first"
+          },
+          "response": [
+            {
+              "name": "200 - Success",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  {\n    \"id\": \"DK4KVCDl5jm6SwmWN4kF\",\n    \"prompt\": \"A beautiful sunset over mountains\",\n    \"model\": \"imagen-3.0-generate-001\",\n    \"imageUrl\": \"https://storage.googleapis.com/manifest-bit-494908-a5-genai-images/images/1746005823790.jpg\",\n    \"createdAt\": \"2026-04-30T10:57:03.790Z\"\n  }\n]",
+              "originalRequest": {
+                "method": "GET",
+                "url": { "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/history" }
+              }
+            },
+            {
+              "name": "200 - Empty",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[]",
+              "originalRequest": {
+                "method": "GET",
+                "url": { "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/history" }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read One - Get by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/history/DK4KVCDl5jm6SwmWN4kF",
+              "protocol": "https",
+              "host": ["cloud-ai-gateway-2aslucyl", "uc", "gateway", "dev"],
+              "path": ["history", "DK4KVCDl5jm6SwmWN4kF"]
+            },
+            "description": "Get a specific saved result by its Firestore document ID"
+          },
+          "response": [
+            {
+              "name": "200 - Success",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": \"DK4KVCDl5jm6SwmWN4kF\",\n  \"prompt\": \"A beautiful sunset over mountains\",\n  \"model\": \"imagen-3.0-generate-001\",\n  \"imageUrl\": \"https://storage.googleapis.com/manifest-bit-494908-a5-genai-images/images/1746005823790.jpg\",\n  \"createdAt\": \"2026-04-30T10:57:03.790Z\"\n}",
+              "originalRequest": {
+                "method": "GET",
+                "url": { "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/history/DK4KVCDl5jm6SwmWN4kF" }
+              }
+            },
+            {
+              "name": "404 - Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"error\": \"Not found\"\n}",
+              "originalRequest": {
+                "method": "GET",
+                "url": { "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/history/invalid-id" }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update - Edit by ID",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Updated: A beautiful sunset over mountains in Saudi Arabia\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/history/DK4KVCDl5jm6SwmWN4kF",
+              "protocol": "https",
+              "host": ["cloud-ai-gateway-2aslucyl", "uc", "gateway", "dev"],
+              "path": ["history", "DK4KVCDl5jm6SwmWN4kF"]
+            },
+            "description": "Update the prompt text of a saved result"
+          },
+          "response": [
+            {
+              "name": "200 - Updated",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": \"DK4KVCDl5jm6SwmWN4kF\",\n  \"prompt\": \"Updated: A beautiful sunset over mountains in Saudi Arabia\",\n  \"updatedAt\": \"2026-04-30T12:00:00.000Z\"\n}",
+              "originalRequest": {
+                "method": "PUT",
+                "url": { "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/history/DK4KVCDl5jm6SwmWN4kF" }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete - Remove by ID",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/history/DK4KVCDl5jm6SwmWN4kF",
+              "protocol": "https",
+              "host": ["cloud-ai-gateway-2aslucyl", "uc", "gateway", "dev"],
+              "path": ["history", "DK4KVCDl5jm6SwmWN4kF"]
+            },
+            "description": "Delete a saved result from Firestore and remove image from Cloud Storage"
+          },
+          "response": [
+            {
+              "name": "200 - Deleted",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Deleted successfully\",\n  \"id\": \"DK4KVCDl5jm6SwmWN4kF\"\n}",
+              "originalRequest": {
+                "method": "DELETE",
+                "url": { "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/history/DK4KVCDl5jm6SwmWN4kF" }
+              }
+            },
+            {
+              "name": "404 - Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"error\": \"Not found\"\n}",
+              "originalRequest": {
+                "method": "DELETE",
+                "url": { "raw": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev/history/invalid-id" }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "gateway_url",
+      "value": "https://cloud-ai-gateway-2aslucyl.uc.gateway.dev",
+      "type": "string"
+    }
+  ]
+}
