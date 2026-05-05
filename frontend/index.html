@@ -526,7 +526,7 @@
   async function deleteItem(id) {
     if (!confirm('Delete this item?')) return;
     try {
-      const res = await fetch(S3 + '/history/' + id, { method: 'DELETE' });
+      const res = await fetch('https://crud-service-180225892893.us-central1.run.app/api/history/' + id, { method: 'DELETE' });
       if (!res.ok) throw new Error('Delete failed');
       document.getElementById('item-' + id)?.remove();
       const grid = document.getElementById('history-grid');
