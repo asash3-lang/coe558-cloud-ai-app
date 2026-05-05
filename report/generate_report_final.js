@@ -1,7 +1,8 @@
 const {
   Document, Packer, Paragraph, Table, TableRow, TableCell,
   TextRun, HeadingLevel, AlignmentType, WidthType, ShadingType,
-  PageBreak, BorderStyle, LevelFormat, Header, Footer, PageNumber
+  PageBreak, BorderStyle, LevelFormat, Header, Footer, PageNumber,
+  ImageRun
 } = require('docx');
 const fs = require('fs');
 
@@ -108,6 +109,35 @@ function imgPlaceholder(num, label, location) {
   ];
 }
 
+// Embed actual screenshot image with label
+function imgEmbed(num, label, location, imgPath) {
+  const imgData = fs.readFileSync(imgPath);
+  const ext = imgPath.split('.').pop().toLowerCase();
+  return [
+    new Paragraph({
+      spacing: { before: 220, after: 60 },
+      children: [
+        new TextRun({ text: `${num}.  `, bold: true, size: 22, color: BLUE, font: 'Arial' }),
+        new TextRun({ text: label, bold: true, size: 22, color: DARK, font: 'Arial' }),
+      ]
+    }),
+    new Paragraph({
+      spacing: { after: 100 },
+      children: [new TextRun({ text: `Where: ${location}`, size: 18, color: '888888', italics: true, font: 'Arial' })]
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 300 },
+      children: [new ImageRun({
+        type: ext === 'jpg' ? 'jpeg' : ext,
+        data: imgData,
+        transformation: { width: 590, height: 370 },
+        altText: { title: label, description: label, name: `screenshot-${num}` }
+      })]
+    })
+  ];
+}
+
 // Splits on \n — each line becomes its own paragraph with code block styling
 function code(text) {
   const lines = text.split('\n');
@@ -183,7 +213,7 @@ children.push(empty());
 children.push(p('Instructor: Dr. Mohammad Al-Mohsin', { center: true, size: 12 }));
 children.push(p('Submission Date: May 9, 2026', { center: true, size: 12 }));
 children.push(empty(), empty());
-children.push(tbl(['Student Name', 'Student ID'], [['Shouq Almutairi', '[Student ID]']], [4500, 4500]));
+children.push(tbl(['Student Name', 'Student ID'], [['Abdullah Saeed Almalki', '202419960']], [4500, 4500]));
 children.push(pgBreak());
 
 // ─── 1. PROJECT OVERVIEW ──────────────────────────────────────────────────────
@@ -705,7 +735,7 @@ children.push(tbl(
 ));
 children.push(empty());
 children.push(h2('11.3 Cloud Build Trigger Configuration'));
-children.push(bul('Source:', 'GitHub repository — shooqealmutairi/coe558-cloud-ai-app'));
+children.push(bul('Source:', 'GitHub repository — https://github.com/asash3-lang/coe558-cloud-ai-app'));
 children.push(bul('Branch filter:', '^main$ (triggers on every push to main branch)'));
 children.push(bul('Build config:', 'Path to each service\'s cloudbuild.yaml file'));
 children.push(bul('Substitution:', '_PROJECT_ID=manifest-bit-494908-a5'));
@@ -791,8 +821,8 @@ children.push(tbl(
     ['EC1 — GraphQL Service',       'https://graphql-service-180225892893.us-central1.run.app/graphql'],
     ['EC2 — Async Service',         'https://async-service-180225892893.us-central1.run.app'],
     ['EC2 — Worker Service',        'https://worker-service-180225892893.us-central1.run.app'],
-    ['GitHub Repository',               'https://github.com/shooqealmutairi/coe558-cloud-ai-app'],
-    ['Demo Recording',                  '[Add Google Drive or YouTube link here]'],
+    ['GitHub Repository',               'https://github.com/asash3-lang/coe558-cloud-ai-app'],
+    ['Demo Recording',                  'https://drive.google.com/file/d/1wY5cBikgvICOAo52dJQFpbQYekBTbvYL/view?usp=sharing'],
   ],
   [3200, 5800]
 ));
@@ -834,47 +864,58 @@ children.push(tbl(
 children.push(pgBreak());
 
 // ─── 16. SCREENSHOTS ──────────────────────────────────────────────────────────
+const SS = 'C:\\Users\\user\\Desktop\\project\\screenshot\\';
+
 children.push(h1('16. Screenshots'));
-children.push(p(
-  'Insert a screenshot for each item below by clicking inside the box in Microsoft Word and using ' +
-  'Insert > Pictures. Each box is labeled with what to capture and where to find it.',
-  { italic: true, color: '555555' }
-));
 children.push(empty());
 
-children.push(...imgPlaceholder(1,  'Cloud Run — All 8 services showing Status: Active',
-  'GCP Console → Cloud Run (show all services: weather, genai, crud, frontend, swagger-ui, graphql, async, worker)'));
-children.push(...imgPlaceholder(2,  'API Gateway — cloud-ai-gateway Active with the gateway URL',
-  'GCP Console → API Gateway → Gateways → click cloud-ai-gateway'));
-children.push(...imgPlaceholder(3,  'Firestore — genai-history collection with sample documents',
-  'GCP Console → Firestore → Data → genai-history collection'));
-children.push(...imgPlaceholder(4,  'Cloud Storage — bucket with uploaded JPEG image files',
-  'GCP Console → Cloud Storage → manifest-bit-494908-a5-genai-images → images/ folder'));
-children.push(...imgPlaceholder(5,  'Vertex AI — API enabled confirmation',
-  'GCP Console → APIs & Services → Enabled APIs → search "Vertex AI API"'));
-children.push(...imgPlaceholder(6,  'Pub/Sub — genai-requests topic and genai-worker-push subscription',
-  'GCP Console → Pub/Sub → Topics (show genai-requests) then Subscriptions (show genai-worker-push)'));
-children.push(...imgPlaceholder(7,  'Frontend — Weather section showing weather for a city (e.g. Riyadh)',
-  'Browser → https://frontend-180225892893.us-central1.run.app → search a city'));
-children.push(...imgPlaceholder(8,  'Frontend — AI image generation: prompt entered and image generated',
-  'Browser → Frontend → type a prompt → click Generate → wait for result'));
-children.push(...imgPlaceholder(9,  'Frontend — History gallery with multiple saved AI images',
-  'Browser → Frontend → History section (after saving 2–3 images)'));
-children.push(...imgPlaceholder(10, 'Swagger UI — All three API service tabs (S1, S2, S3)',
-  'Browser → https://swagger-ui-180225892893.us-central1.run.app'));
-children.push(...imgPlaceholder(11, 'GraphiQL — Running a weather query in the browser IDE',
-  'Browser → https://graphql-service-180225892893.us-central1.run.app/graphql → run: query { weather(city:"Riyadh") { temp_c condition } }'));
-children.push(...imgPlaceholder(12, 'Postman — Requests to all 3 services with sample responses',
-  'Postman → import COE558-Cloud-AI-App.postman_collection.json → run requests and show responses'));
-children.push(...imgPlaceholder(13, 'Cloud Build — 4 CI/CD triggers configured for GitHub',
-  'GCP Console → Cloud Build → Triggers (show 4 triggers: weather, genai, crud, frontend)'));
-children.push(...imgPlaceholder(14, 'Terraform — terraform/main.tf open in editor or Cloud Shell',
-  'VS Code or Cloud Shell → open terraform/main.tf (shows all GCP resources defined as code)'));
+children.push(...imgEmbed(1,  'Cloud Run — All 8 services showing Status: Active',
+  'GCP Console → Cloud Run',
+  SS + 'cloudrun.png'));
+children.push(...imgEmbed(2,  'API Gateway — cloud-ai-gateway Active with the gateway URL',
+  'GCP Console → API Gateway → Gateways',
+  SS + 'gateways.png'));
+children.push(...imgEmbed(3,  'Firestore — genai-history collection with sample documents',
+  'GCP Console → Firestore → Data',
+  SS + 'firestore.png'));
+children.push(...imgEmbed(4,  'Cloud Storage — bucket with uploaded JPEG image files',
+  'GCP Console → Cloud Storage',
+  SS + 'cloudstorge.png'));
+children.push(...imgEmbed(5,  'Vertex AI — API enabled confirmation',
+  'GCP Console → APIs & Services → Enabled APIs',
+  SS + 'vertex.png'));
+children.push(...imgEmbed(6,  'Pub/Sub — genai-requests topic and genai-worker-push subscription',
+  'GCP Console → Pub/Sub',
+  SS + 'pup-sub.png'));
+children.push(...imgEmbed(7,  'Frontend — Weather section showing weather for a city',
+  'Browser → Frontend App',
+  SS + 'frontend weather.png'));
+children.push(...imgEmbed(8,  'Frontend — AI image generation with prompt and result',
+  'Browser → Frontend App → Generate Image',
+  SS + 'image frontend .png'));
+children.push(...imgEmbed(9,  'Frontend — History gallery with saved AI images',
+  'Browser → Frontend App → History',
+  SS + 's3 history.png'));
+children.push(...imgEmbed(10, 'Swagger UI — API documentation all three services',
+  'Browser → Swagger UI',
+  SS + 'swagger ui.png'));
+children.push(...imgEmbed(11, 'GraphiQL — Running a weather query in the browser IDE',
+  'Browser → GraphQL Service /graphql',
+  SS + 'graphsql.png'));
+children.push(...imgEmbed(12, 'Postman — Requests to all 3 services with sample responses',
+  'Postman Application',
+  SS + 'postman.png'));
+children.push(...imgEmbed(13, 'Cloud Build — 4 CI/CD triggers configured for GitHub',
+  'GCP Console → Cloud Build → Triggers',
+  SS + 'cloudbuildtrigger.png'));
+children.push(...imgEmbed(14, 'Terraform — terraform/main.tf showing all GCP resources',
+  'VS Code → terraform/main.tf',
+  SS + 'terraform.png'));
 children.push(empty());
 
 // ─── 17. DEMO RECORDING ───────────────────────────────────────────────────────
 children.push(h1('17. Demo Recording'));
-children.push(p('[Insert demo recording link here — Google Drive or YouTube]', { bold: true, color: BLUE, size: 13 }));
+children.push(p('https://drive.google.com/file/d/1wY5cBikgvICOAo52dJQFpbQYekBTbvYL/view?usp=sharing', { bold: true, color: BLUE, size: 13 }));
 children.push(empty());
 children.push(p('The demo recording follows this structure:'));
 children.push(tbl(
@@ -948,7 +989,7 @@ const doc = new Document({
           border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: BLUE, space: 1 } },
           spacing: { after: 120 },
           children: [new TextRun({
-            text: 'COE 558 — Cloud and Edge Computing — Shouq Almutairi — Term 252',
+            text: 'COE 558 — Cloud and Edge Computing — Abdullah Saeed Almalki — Term 252',
             size: 18, color: '888888', font: 'Arial'
           })]
         })]
